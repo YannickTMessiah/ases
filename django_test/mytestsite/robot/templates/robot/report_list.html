@@ -1,0 +1,84 @@
+{% load custom_tags %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Pagina de teste do robo da SPCD</title>
+    <meta charset="UTF-8">
+    <meta name="description" content="Free Web tutorials">
+    <meta name="author" content="CCSL-IME-USP">
+    <style>
+        table,
+        th,
+        td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 5px;
+            text-align: left;
+        }
+        th a {
+            color: #007;
+        }
+        .pos, .pos a {
+            background-color: #070;
+            color: #fff;
+        }
+        .neg, .neg a {
+            background-color: #700;
+            color: #fff;
+        }
+        .null {
+            background-color: #000;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Resultados do robô para os últimos {{ datas|length }} dias</h1>
+    <font size="4">
+        <table style="width:100%">
+            <tr>
+                <th colspan="{{ datas|length|add:1 }}">Relatórios (clique para ver o relatório)</th>
+            </tr>
+            <tr>
+                <th>URL</th>
+                {% for data in datas %}
+                    <th>{{ data|slice:":5" }}</th>
+                {% endfor %}
+            </tr>
+            
+            {% for url in urls %}
+                <tr>
+                    <th><a href="{{ url }}">{{ url }}</a></th>
+                    {% for data in datas %}
+                        {% if data in datas_relatorios|get_item:url %}
+                            {% for relatorio in relatorios|get_item:url %}
+                                {% if relatorio.data == data %}
+                                    {% if relatorio.pos %}
+                                        <td class="pos">
+                                            <a href="{% url 'report_show' report_link=relatorio.link %}">{{ relatorio.nota }}</a>
+                                        </td>
+                                    {% else %}
+                                        <td class="neg">
+                                            <a href="{% url 'report_show' report_link=relatorio.link %}">{{ relatorio.nota }}</a>
+                                        </td>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                                <td class="null"> ______ </td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+    </font>
+</body>
+
+</html>
